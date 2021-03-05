@@ -1,0 +1,21 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: webmicroservicestarter-dev-config # <microservicename>-<env>-config
+data: 
+  app.yaml: |-
+    # Server configurations
+    server:
+      port: :8080
+      basepath: /webmicroservicestarter
+
+    # Application specific configurations
+    application:
+      name: WebMicroserviceStarter
+
+    database:
+      dbname: webmicroservicestarter
+      host: mysql.accuknox-dev-mysql.svc.cluster.local
+      port: 3306
+      user: webmicroservicestarter
+      password: EAy5Kq4uhc5Gkws

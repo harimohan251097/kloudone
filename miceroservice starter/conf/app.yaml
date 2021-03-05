@@ -1,0 +1,16 @@
+# Server configurations
+server:
+  port: :8080
+  basepath: /webmicroservicestarter
+
+# Application specific configurations
+application:
+  name: WebMicroserviceStarter
+  doc: http://localhost:8080
+
+database:
+  dbname: webmicroservicestarter
+  host: localhost
+  port: 3306
+  user: root
+  password: root

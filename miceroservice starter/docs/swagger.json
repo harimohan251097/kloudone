@@ -1,0 +1,106 @@
+{
+    "swagger": "2.0",
+    "info": {
+        "description": "This microservice serves as an example microservice",
+        "title": "Articles Microservice",
+        "contact": {},
+        "version": "0.0.2"
+    },
+    "basePath": "/webmicroservicestarter/api/v1",
+    "paths": {
+        "/articles": {
+            "get": {
+                "description": "List all articles",
+                "produces": [
+                    "application/json"
+                ],
+                "summary": "List all articles",
+                "responses": {
+                    "200": {
+                        "description": "List of articles",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/dto.ArticleDTO"
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Error accessing articles",
+                        "schema": {
+                            "$ref": "#/definitions/dto.ErrorDTO"
+                        }
+                    }
+                }
+            }
+        },
+        "/articles/{id}": {
+            "get": {
+                "description": "Get an article by id",
+                "produces": [
+                    "application/json"
+                ],
+                "summary": "Get article by ID",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "id",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "article",
+                        "schema": {
+                            "$ref": "#/definitions/dto.ArticleDTO"
+                        }
+                    },
+                    "500": {
+                        "description": "Error accessing articles",
+                        "schema": {
+                            "$ref": "#/definitions/dto.ErrorDTO"
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "definitions": {
+        "dto.ArticleDTO": {
+            "type": "object",
+            "properties": {
+                "author": {
+                    "type": "string"
+                },
+                "body": {
+                    "type": "string"
+                },
+                "created_at": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "title": {
+                    "type": "string"
+                },
+                "updated_at": {
+                    "type": "string"
+                }
+            }
+        },
+        "dto.ErrorDTO": {
+            "type": "object",
+            "properties": {
+                "error_code": {
+                    "type": "string"
+                },
+                "error_message": {
+                    "type": "string"
+                }
+            }
+        }
+    }
+}

@@ -1,0 +1,69 @@
+basePath: /webmicroservicestarter/api/v1
+definitions:
+  dto.ArticleDTO:
+    properties:
+      author:
+        type: string
+      body:
+        type: string
+      created_at:
+        type: string
+      id:
+        type: integer
+      title:
+        type: string
+      updated_at:
+        type: string
+    type: object
+  dto.ErrorDTO:
+    properties:
+      error_code:
+        type: string
+      error_message:
+        type: string
+    type: object
+info:
+  contact: {}
+  description: This microservice serves as an example microservice
+  title: Articles Microservice
+  version: 0.0.2
+paths:
+  /articles:
+    get:
+      description: List all articles
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: List of articles
+          schema:
+            items:
+              $ref: '#/definitions/dto.ArticleDTO'
+            type: array
+        "500":
+          description: Error accessing articles
+          schema:
+            $ref: '#/definitions/dto.ErrorDTO'
+      summary: List all articles
+  /articles/{id}:
+    get:
+      description: Get an article by id
+      parameters:
+      - description: id
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: article
+          schema:
+            $ref: '#/definitions/dto.ArticleDTO'
+        "500":
+          description: Error accessing articles
+          schema:
+            $ref: '#/definitions/dto.ErrorDTO'
+      summary: Get article by ID
+swagger: "2.0"

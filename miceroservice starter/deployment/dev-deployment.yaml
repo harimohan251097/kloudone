@@ -1,0 +1,102 @@
+############################################################
+# Configuration to bootstrap OPA-Envoy sidecars.
+############################################################
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: opa-istio-config
+data:
+  config.yaml: |
+    plugins:
+      envoy_ext_authz_grpc:
+        addr: :9191
+        path: istio/authz/allow
+    decision_logs:
+      console: true
+---
+######################
+# Containers to deploy
+######################
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: webmicroservicestarter-deployment # Deployment name
+  labels:
+    app: webmicroservicestarter # Service name
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: webmicroservicestarter # Service name
+  template:
+    metadata:
+      labels:
+        app: webmicroservicestarter # Service name
+        version: v0.0.2 # Service version
+    spec:
+      containers:
+      # The microservice
+      - name: web-microservice-starter # Container name
+        image: gcr.io/accuknox/web-microservice-starter:0.0.2 # Image URL
+        resources:
+          requests:
+            memory: 800Mi
+            cpu: 500m
+          limits:
+            memory: 800Mi
+            cpu: 500m
+        ports:
+        - containerPort: 8080 # Port specified in app.yaml
+        volumeMounts:
+        - name: config-volume # Location of the config file. [Do not edit]
+          mountPath: /home/knoxservice/conf
+        - name: logs-volume # Location of the log file. [Do not edit]
+          mountPath: /home/knoxservice/log
+      # OPA Sidecar
+      # - name: opa
+      #   image: openpolicyagent/opa:0.26.0-istio
+      #   securityContext:
+      #     runAsUser: 1111
+      #   volumeMounts:
+      #   - readOnly: true
+      #     mountPath: /policy
+      #     name: opa-policy
+      #   - readOnly: true
+      #     mountPath: /config
+      #     name: opa-istio-config
+      #   args:
+      #     - "run"
+      #     - "--server"
+      #     - "--config-file=/config/config.yaml"
+      #     - "--addr=localhost:8181"
+      #     - "--diagnostic-addr=0.0.0.0:8282"
+      #     - "--ignore=.*"
+      #     - "/policy/policy.rego"
+      #   livenessProbe:
+      #     httpGet:
+      #       path: /health?plugins
+      #       scheme: HTTP
+      #       port: 8282
+      #     initialDelaySeconds: 5
+      #     periodSeconds: 5
+      #   readinessProbe:
+      #     httpGet:
+      #       path: /health?plugins
+      #       scheme: HTTP
+      #       port: 8282
+      #     initialDelaySeconds: 5
+      #     periodSeconds: 5
+      # Volumes
+      volumes:
+      - name: config-volume
+        configMap:
+          name: webmicroservicestarter-dev-config # ConfigMap to use. Env specific
+      - name: logs-volume
+        emptyDir: {}
+      - name: opa-policy
+        configMap:
+          name: opa-policy
+      - name: opa-istio-config
+        configMap:
+          name: opa-istio-config
+---

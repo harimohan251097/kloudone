@@ -1,0 +1,31 @@
+apiVersion: security.istio.io/v1beta1
+kind: RequestAuthentication
+metadata:
+  name: webmicroservicestarter
+  namespace: saleem-demo
+spec:
+  selector:
+    matchLabels:
+      app: webmicroservicestarter
+  jwtRules:
+  - issuer: "https://keycloak-dev.accuknox.com/auth/realms/Accuknox"
+    jwksUri: https://keycloak-dev.accuknox.com/auth/realms/accuknox/protocol/openid-connect/certs
+---
+apiVersion: security.istio.io/v1beta1
+kind: AuthorizationPolicy
+metadata:
+  name: webmicroservicestarter
+  namespace: saleem-demo
+spec:
+  action: ALLOW
+  selector:
+    matchLabels:
+      app: webmicroservicestarter
+  rules:
+  - to:
+    - operation:
+        methods: ["GET"] # Define paths
+        paths: ["/webmicroservicestarter/api/v1/articles", "/webmicroservicestarter/api/v1/articles/*"] # Define URLs
+    when: 
+    - key: request.auth.claims[realm_access][roles]
+      values: ["default_user"] # Define roles that can access
